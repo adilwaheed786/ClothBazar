@@ -1,0 +1,56 @@
+﻿@model OrderDetailsViewModel
+
+@if (Model != null && Model.Order != null)
+{
+    var i = 1;
+    <section class="flat-row main-shop shop-slidebar">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 order-md-1">
+                    <h4 class="mb-3">Billing Address</h4>
+                    <div class="mb-3">
+                        <p>
+                            @Model.OrderBy.Address
+                        </p>
+                   </div>
+                    <div class="mb-3">
+                        <label for="status"> Order Status : @Model.Order.Status </label>
+                    </div>
+                </div>
+                <hr />
+                <div class="col-md-12 order-md-2 mb-4">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Your cart Items For Order Id:@Model.Order.ID</span>
+                    </h4>
+                    <ul class="list-group mb-3">
+                        @foreach (var orderItem in Model.Order.OrderItems)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-condensed" data-id="@orderItem.ID">
+                                <div>
+                                    <h6 class="my-0">@i - @orderItem.Product.Name - Qty: @orderItem.Quantity</h6>
+                                    <small class="text-muted">@(orderItem.Product.Description.Length > 100 ? orderItem.Product.Description.Substring(0, 99) : orderItem.Product.Description)</small>
+                                </div>
+                                <span class="text-muted">Unit Price: $ @orderItem.Product.Price - Total Price: @(orderItem.Quantity * orderItem.Product.Price)</span>
+                            </li>
+
+                            i++;
+                        }
+
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>Total (USD)</span>
+                            <strong>$ @Model.Order.TotalAmount</strong>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div><!-- /.container -->
+    </section>
+
+}
+else
+{
+    <div>
+        <b>Order Items Detail not availble</b>
+    </div>
+}

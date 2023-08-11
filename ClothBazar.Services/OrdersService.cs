@@ -77,6 +77,28 @@ namespace ClothBazar.Services
             }
         }
 
+        public Order GetOrderItemDetailID(int ID,string userId)
+        {
+            using (var context = new CBContext())
+            {
+                return context.Orders.Where(x => x.ID == ID && x.UserID.ToLower().Contains(userId.ToLower())).Include(x => x.OrderItems).Include("OrderItems.Product").FirstOrDefault();
+            }
+        }
+
+        public List<Order> GetOrderHistoryByUserID(string userID)
+        {
+            using (var context = new CBContext())
+            {
+                var orders = context.Orders.ToList();
+
+                if (!string.IsNullOrEmpty(userID))
+                {
+                    orders = orders.Where(x => x.UserID.ToLower().Contains(userID.ToLower())).ToList();
+                }
+
+                return orders;
+            }
+        }
         public bool UpdateOrderStatus(int ID, string status)
         {
             using (var context = new CBContext())
