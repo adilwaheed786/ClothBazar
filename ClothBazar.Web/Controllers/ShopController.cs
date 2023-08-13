@@ -120,7 +120,7 @@ namespace ClothBazar.Web.Controllers
                 newOrder.TotalAmount = boughtProducts.Sum(x => x.Price * productQuantities.Where(productID => productID == x.ID).Count());
 
                 newOrder.OrderItems = new List<OrderItem>();
-                newOrder.OrderItems.AddRange(boughtProducts.Select(x => new OrderItem() { ProductID = x.ID, Quantity = productQuantities.Where(productID => productID == x.ID).Count() }));
+                newOrder.OrderItems.AddRange(boughtProducts.Select(x => new OrderItem() { ProductID = x.ID, Quantity = productQuantities.Where(productID => productID == x.ID).Count(),ItemPrice=x.Price }));
 
                 var rowsEffected = ShopService.Instance.SaveOrder(newOrder);
 
