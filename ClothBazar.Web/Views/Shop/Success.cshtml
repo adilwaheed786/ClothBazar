@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "Success";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<section class="flat-row flat-iconbox">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-section">
+                    <h2 class="title">
+                        Payment Successful!
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="title-section">
+                    <h3 class="title">
+                        Thank you for your purchase.
+                    </h3>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Show SweetAlert on page load
+            swal("Done", "Your Order has been placed.", "success").then((value) => {
+                // Redirect to another page on OK
+                $.cookie('CartProducts', '', { path: '/' });
+                updateCartProducts();
+                window.location = '@Url.Action("Index", "Shop")';
+            });
+        });
+</script>
+

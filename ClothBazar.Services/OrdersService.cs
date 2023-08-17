@@ -37,7 +37,7 @@ namespace ClothBazar.Services
                 
                 if (!string.IsNullOrEmpty(userID))
                 {
-                    orders = orders.Where(x => x.UserID.ToLower().Contains(userID.ToLower())).ToList();
+                    orders = orders.Where(x => x.ID==Convert.ToInt32(userID)).ToList();
                 }
 
                 if (!string.IsNullOrEmpty(status))

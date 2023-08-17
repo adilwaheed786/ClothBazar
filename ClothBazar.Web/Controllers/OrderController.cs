@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace ClothBazar.Web.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -39,6 +40,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         // GET: Order
+        [Authorize(Roles ="Admin")]
         public ActionResult Index(string userID, string status, int? pageNo)
         {
             OrdersViewModel model = new OrdersViewModel();
@@ -55,7 +57,7 @@ namespace ClothBazar.Web.Controllers
 
             return View(model);
         }
-
+        [Authorize(Roles = "Admin")]
         public ActionResult Details(int ID)
         {
             OrderDetailsViewModel model = new OrderDetailsViewModel();
@@ -72,6 +74,25 @@ namespace ClothBazar.Web.Controllers
             return View(model);
         }
 
+        public ActionResult OrderItemDetail(int ID, string userId)
+        {
+            OrderDetailsViewModel model = new OrderDetailsViewModel();
+            model.Order = OrdersService.Instance.GetOrderItemDetailID(ID, userId);
+            if (model.Order != null)
+            {
+                model.OrderBy = UserManager.FindById(model.Order.UserID);
+            }
+            //model.AvailableStatuses = new List<string>() { "Pending", "In Progress", "Delivered" };
+            return View(model);
+        }
+
+        public ActionResult OrderHistory(string userid)
+        {
+            OrdersViewModel model = new OrdersViewModel();
+            model.Orders = OrdersService.Instance.GetOrderHistoryByUserID(userid);
+            return View(model);
+        }
+           [Authorize(Roles ="Admin")]
         public JsonResult ChangeStatus(string status, int ID)
         {
             JsonResult result = new JsonResult();

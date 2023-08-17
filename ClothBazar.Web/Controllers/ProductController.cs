@@ -12,11 +12,12 @@ namespace ClothBazar.Web.Controllers
     public class ProductController : Controller
     {
         // GET: Product
+        [Authorize(Roles ="Admin")]
         public ActionResult Index()
         {
             return View();
         }
-
+        [AllowAnonymous]
         public ActionResult ProductTable(string search, int? pageNo)
         {
             var pageSize = ConfigurationsService.Instance.PageSize();
@@ -35,6 +36,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             NewProductViewModel model = new NewProductViewModel();
@@ -45,6 +47,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(NewProductViewModel model)
         {
             var newProduct = new Product();
@@ -59,6 +62,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int ID)
         {
             EditProductViewModel model = new EditProductViewModel();
@@ -78,6 +82,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(EditProductViewModel model)
         {
             var existingProduct = ProductsService.Instance.GetProduct(model.ID);
@@ -100,6 +105,7 @@ namespace ClothBazar.Web.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int ID)
         {
             ProductsService.Instance.DeleteProduct(ID);
@@ -108,13 +114,14 @@ namespace ClothBazar.Web.Controllers
         }
         
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Details(int ID)
         { 
             ProductViewModel model = new ProductViewModel();
 
             model.Product = ProductsService.Instance.GetProduct(ID);
 
-            if (model.Product == null) return HttpNotFound();
+            if (model.Product == null)  return View("PageNotFound"); ;
 
             return View(model);
         }

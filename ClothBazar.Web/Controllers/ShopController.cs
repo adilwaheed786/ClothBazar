@@ -10,6 +10,10 @@ using System.Linq;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
+using Stripe;
+using Stripe.Checkout;
+using System.Web.Configuration;
+using System.Configuration;
 
 namespace ClothBazar.Web.Controllers
 {
@@ -17,7 +21,11 @@ namespace ClothBazar.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        
+
+        public ShopController()
+        {
+            StripeConfiguration.ApiKey = WebConfigurationManager.AppSettings["StripeSecretKey"];
+        }
         public ApplicationSignInManager SignInManager
         {
             get
@@ -101,18 +109,72 @@ namespace ClothBazar.Web.Controllers
             return View(model);
         }
 
-        //productIDs should beformatted like = "7-7-9-1"
+        [Authorize]
         public JsonResult PlaceOrder(string productIDs)
         {
             JsonResult result = new JsonResult();
-            result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            try
+            {
+                result.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
 
+                if (!string.IsNullOrEmpty(productIDs))
+                {
+                    var productQuantities = productIDs.Split('-').Select(x => int.Parse(x)).ToList();
+
+                    var distinctProductIDs = productQuantities.Distinct().ToList();
+
+                    var boughtProducts = ProductsService.Instance.GetProducts(distinctProductIDs);
+
+                    var sessionLineItems = new List<SessionLineItemOptions>();
+                    foreach (var product in boughtProducts)
+                    {
+                        var quantity = productQuantities.Where(productID => productID == product.ID).Count();
+                        sessionLineItems.Add(new SessionLineItemOptions
+                        {
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                UnitAmount = ((long)product.Price) * 100, // Convert to cents
+                                Currency = "usd",
+                                ProductData = new SessionLineItemPriceDataProductDataOptions
+                                {
+                                    Name = product.Name,
+                                },
+                            },
+                            Quantity = quantity,
+                        });
+                    }
+
+                    var options = new SessionCreateOptions
+                    {
+                        LineItems = sessionLineItems,
+                        Mode = "payment",
+                        SuccessUrl = $"http://localhost:61060/shop/success?productIDs={productIDs}", // Include product IDs in the URL
+                        CancelUrl = "http://localhost:61060/shop/cancel",
+                    };
+
+                    var service = new SessionService();
+                    Session session = service.Create(options);
+                    result.Data = new { Success = true,  Url =session.Url};
+                }
+              
+            }
+            catch (Exception ex)
+            {
+
+                result.Data = new { Success = false };
+            }
+            return result;
+        }
+
+        [Authorize]
+        public ActionResult Success(string productIDs)
+        {
             if (!string.IsNullOrEmpty(productIDs))
             {
                 var productQuantities = productIDs.Split('-').Select(x => int.Parse(x)).ToList();
-
                 var boughtProducts = ProductsService.Instance.GetProducts(productQuantities.Distinct().ToList());
 
+                // Create the order and save data to the database
                 Order newOrder = new Order();
                 newOrder.UserID = User.Identity.GetUserId();
                 newOrder.OrderedAt = DateTime.Now;
@@ -120,18 +182,22 @@ namespace ClothBazar.Web.Controllers
                 newOrder.TotalAmount = boughtProducts.Sum(x => x.Price * productQuantities.Where(productID => productID == x.ID).Count());
 
                 newOrder.OrderItems = new List<OrderItem>();
-                newOrder.OrderItems.AddRange(boughtProducts.Select(x => new OrderItem() { ProductID = x.ID, Quantity = productQuantities.Where(productID => productID == x.ID).Count(),ItemPrice=x.Price }));
+                newOrder.OrderItems.AddRange(boughtProducts.Select(x => new OrderItem() { ProductID = x.ID, Quantity = productQuantities.Where(productID => productID == x.ID).Count(), ItemPrice = x.Price }));
 
                 var rowsEffected = ShopService.Instance.SaveOrder(newOrder);
 
-                result.Data = new { Success = true, Rows = rowsEffected };
-            }
-            else
-            {
-                result.Data = new { Success = false };
+                // Return a view or appropriate response
+                return View();
             }
 
-            return result;
+            // If productIDs are invalid or not found, handle accordingly
+            return View("Cancel");
+        }
+        [Authorize]
+        public ActionResult Cancel()
+        {
+            // Logic if needed before rendering the cancel view
+            return View(); // Assuming you have a view named "Cancel.cshtml"
         }
     }
 }

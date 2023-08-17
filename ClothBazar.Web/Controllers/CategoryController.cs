@@ -37,13 +37,14 @@ namespace ClothBazar.Web.Controllers
             }
             else
             {
-                return HttpNotFound();
+                return View("PageNotFound");
             }
         }
 
         #region Creation
 
         [HttpGet]
+        [Authorize (Roles ="Admin")]
         public ActionResult Create()
         {
             NewCategoryViewModel model = new NewCategoryViewModel();
@@ -52,6 +53,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(NewCategoryViewModel model)
         {
             if (ModelState.IsValid)
@@ -77,6 +79,7 @@ namespace ClothBazar.Web.Controllers
         #region Updation
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int ID)
         {
             EditCategoryViewModel model = new EditCategoryViewModel();
@@ -93,6 +96,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(EditCategoryViewModel model)
         {
             var existingCategory = CategoriesService.Instance.GetCategory(model.ID);
@@ -109,6 +113,7 @@ namespace ClothBazar.Web.Controllers
         #endregion
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int ID)
         {
             CategoriesService.Instance.DeleteCategory(ID);
