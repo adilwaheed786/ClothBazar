@@ -40,7 +40,7 @@ namespace ClothBazar.Web.Controllers
         }
 
         // GET: Order
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles ="Admin,Staff")]
         public ActionResult Index(string userID, string status, int? pageNo)
         {
             OrdersViewModel model = new OrdersViewModel();
@@ -57,7 +57,7 @@ namespace ClothBazar.Web.Controllers
 
             return View(model);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Staff")]
         public ActionResult Details(int ID)
         {
             OrderDetailsViewModel model = new OrderDetailsViewModel();
@@ -92,7 +92,14 @@ namespace ClothBazar.Web.Controllers
             model.Orders = OrdersService.Instance.GetOrderHistoryByUserID(userid);
             return View(model);
         }
-           [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin,Staff")]
+        public ActionResult Report()
+        {
+            OrdersViewModel model = new OrdersViewModel();
+            model.Orders = OrdersService.Instance.GetTodayOrderReport();
+            return View(model);
+        }
+        [Authorize(Roles ="Admin")]
         public JsonResult ChangeStatus(string status, int ID)
         {
             JsonResult result = new JsonResult();

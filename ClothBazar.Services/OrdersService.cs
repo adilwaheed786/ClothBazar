@@ -99,6 +99,21 @@ namespace ClothBazar.Services
                 return orders;
             }
         }
+        public List<Order> GetTodayOrderReport()
+        {
+            using (var context = new CBContext())
+            {
+                DateTime today = DateTime.Today;
+                DateTime tomorrow = today.AddDays(1);
+                var orders = context.Orders
+                    .Where(order=>order.OrderedAt >= today && order.OrderedAt < tomorrow)
+                   // .Include(order => order.OrderItems)  // Include order items
+                    .OrderBy(order => order.Status)
+                    .ToList();
+
+                return orders;
+            }
+        }
         public bool UpdateOrderStatus(int ID, string status)
         {
             using (var context = new CBContext())

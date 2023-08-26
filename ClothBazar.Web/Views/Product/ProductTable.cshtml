@@ -39,12 +39,13 @@
 <div>
 	<table id="ProductsTable" class="table table-striped">
 		<thead>
-			<tr>
-				<th class="font-weight-bold">Product Name</th>
-				<th class="font-weight-bold">Category</th>
-				<th class="font-weight-bold">Price</th>
-				<th class="font-weight-bold wrap-td">Actions</th>
-			</tr>
+            <tr>
+                <th class="font-weight-bold">Product Name</th>
+                <th class="font-weight-bold">Category</th>
+                <th class="font-weight-bold">Price</th>
+                <th class="font-weight-bold">Stock Qty</th>
+                <th class="font-weight-bold wrap-td">Actions</th>
+            </tr>
 		</thead>
 		<tbody>
 			@if (Model.Products != null && Model.Products.Count > 0)
@@ -52,25 +53,26 @@
 
 				foreach (var product in Model.Products)
 				{
-					<tr>
-						<td>@product.Name</td>
-						<td>
-							@if (product.Category != null)
-							{
-								<text>@product.Category.Name</text>
-							}
-							else
-							{
-								<text>-</text>
-							}
-						</td>
-						<td>@product.Price</td>
-						<td class="wrap-td">
-							<button class="editBtn" data-id="@product.ID">Edit</button>
-							<button class="deleteBtn" data-id="@product.ID">Delete</button>
-							@*<button class="addtoCart" data-id="@product.ID">Add To Cart</button>*@
-						</td>
-					</tr>
+            <tr>
+                <td>@product.Name</td>
+                <td>
+                    @if (product.Category != null)
+                    {
+                        <text>@product.Category.Name</text>
+                    }
+                    else
+                    {
+                        <text>-</text>
+                    }
+                </td>
+                <td>@product.Price</td>
+                <td>@product.Quantity</td>
+                <td class="wrap-td">
+                    <button class="editBtn" data-id="@product.ID">Edit</button>
+                    <button class="deleteBtn" data-id="@product.ID">Delete</button>
+                    @*<button class="addtoCart" data-id="@product.ID">Add To Cart</button>*@
+                </td>
+            </tr>
 				}
 			}
 			else

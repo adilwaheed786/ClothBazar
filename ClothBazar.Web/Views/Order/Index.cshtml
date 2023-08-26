@@ -30,14 +30,17 @@
 						<div class="col-md-4">
 							<div class="form-group">
 								<label>Action</label>
-								<div class="row">
-									<div class="col-md-4 pr-0">
-										<button class="btn btn-primary form-control" type="submit" id="searchBtn">Search</button>
-									</div>
-									<div class="col-md-4 pr-0">
-										<a class="btn btn-primary form-control" type="button" id="resetBtn" href="@Url.Action("Index", "Order", new { pageNo = 1 })">Reset</a>
-									</div>
-								</div>
+                                <div class="row">
+                                    <div class="col-md-4 pr-0">
+                                        <button class="btn btn-primary form-control" type="submit" id="searchBtn">Search</button>
+                                    </div>
+                                    <div class="col-md-4 pr-0">
+                                        <a class="btn btn-primary form-control" type="button" id="resetBtn" href="@Url.Action("Index", "Order", new { pageNo = 1 })">Reset</a>
+                                    </div>
+                                    <div class="col-md-4 pr-0">
+                                        <a class="btn btn-primary form-control" type="button" id="report" target="_blank" href="@Url.Action("Report", "Order")">Report</a>
+                                    </div>
+                                </div>
 							</div>
 						</div>
 					</div>

@@ -16,27 +16,36 @@
 		{
 			var imageURL = string.IsNullOrEmpty(product.ImageURL) ? defaultImageURL : product.ImageURL;
 
-			<li class="product-item">
-				<div class="product-thumb clearfix">
-					<a href="#">
-						<img src="@imageURL" alt="image" style="height: 295px;">
-					</a>
-				</div>
-				<div class="product-info clearfix">
-					<span class="product-title">
-						@product.Name
-					</span>
-					<div class="price">
-						<ins>
-							<span class="amount">$ @product.Price</span>
-						</ins>
-					</div>
-				</div>
-				<div class="add-to-cart text-center">
-					<a class="filterproductAddToCart" data-id="@product.ID">ADD TO CART</a>
-				</div>
-				<a href="#" class="like"><i class="fa fa-heart-o"></i></a>
-			</li>
+        <li class="product-item">
+            <div class="product-thumb clearfix">
+                <a href="@Url.Action("Details", "Product", new { ID = product.ID })">
+                    <img src="@imageURL" alt="image" style="height: 295px;">
+                </a>
+            </div>
+            <div class="product-info clearfix">
+                <span class="product-title">
+                    @product.Name
+                </span>
+                <div class="price">
+                    <ins>
+                        <span class="amount">$ @product.Price</span>
+                    </ins>
+                </div>
+            </div>
+            @if (product.Quantity > 0)
+            {
+                <a href="#" class="like"><span>Available Qty:@product.Quantity</span></a>
+                <div class="add-to-cart text-center">
+                    <a class="filterproductAddToCart" data-id="@product.ID">ADD TO CART</a>
+                </div>
+            }
+            else
+            {
+                <div class="add-to-cart text-center">
+                    <a>Out Of Stock</a>
+                </div>
+            }
+        </li>
 		}
 	</ul><!-- /.product -->
 </div><!-- /.product-content -->

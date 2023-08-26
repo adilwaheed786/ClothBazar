@@ -123,6 +123,18 @@
                             </nav><!-- /.mainnav -->
                         </div><!-- /.nav-wrap -->
                     }
+                    else if (User.IsInRole("Staff"))
+                    {
+                        <div class="nav-wrap">
+                            <nav id="mainnav" class="mainnav">
+                                <ul class="menu">
+                                    <li>
+                                        <a href="@Url.Action("Index", "Order")">ORDERS</a>
+                                    </li>
+                                </ul>
+                            </nav><!-- /.mainnav -->
+                        </div><!-- /.nav-wrap -->
+                    }
                     else
                     {
                         <div class="nav-wrap">

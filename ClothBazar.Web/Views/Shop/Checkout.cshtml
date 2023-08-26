@@ -10,7 +10,7 @@
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-muted">Your cart</span>
                     </h4>
-                    <ul class="list-group mb-3">
+                    <ul class="list-group mb-3" id="cart-list">
                         @foreach (var product in Model.CartProducts)
                         {
                             var productQuantity = Model.CartProductIDs.Where(productID => productID == product.ID).Count();
@@ -20,7 +20,10 @@
                                     <h6 class="my-0">@i - @product.Name - Qty: @productQuantity</h6>
                                     <small class="text-muted">@(product.Description.Length > 100 ? product.Description.Substring(0, 99) : product.Description)</small>
                                 </div>
-                                <span class="text-muted">Unit Price: $ @product.Price - Total Price: @(productQuantity * product.Price)</span>
+                                <span class="text-muted">
+                                    Unit Price: $ <span class="price">@product.Price </span>   - Total Price: <span class="total-price">@(productQuantity * product.Price)</span> 
+                                    <button class="btn btn-sm btn-danger remove-item" data-id="@product.ID">Remove</button>
+                                </span>
                             </li>
 
                             i++;
@@ -28,10 +31,10 @@
 
                         <li class="list-group-item d-flex justify-content-between">
                             <span>Total (USD)</span>
-                            <strong>$ @Model.CartProducts.Sum(x => x.Price * Model.CartProductIDs.Where(productID => productID == x.ID).Count())</strong>
+                            <strong id="total-price">$ @Model.CartProducts.Sum(x => x.Price * Model.CartProductIDs.Where(productID => productID == x.ID).Count())</strong>
                         </li>
                     </ul>
-                </div>
+                </div>                
                 <div class="col-md-8 order-md-1">
                     <h4 class="mb-3">Billing address</h4>
                     <form class="needs-validation" novalidate="">
@@ -59,7 +62,21 @@
             </div>
         </div><!-- /.container -->
     </section>
-
+    <script>
+        const removeButtons = document.querySelectorAll('.remove-item');
+        removeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.getAttribute('data-id');
+                // Remove the product from cookies
+                const existingCookieData = $.cookie('CartProducts');
+                const products = existingCookieData ? existingCookieData.split('-') : [];
+                const updatedProducts = products.filter(id => id !== productId);
+                $.cookie('CartProducts', updatedProducts.join('-'), { path: '/' });
+                // Reload the page
+                location.reload();
+            });
+        });
+    </script>
 
     <script>
 		$("#placeOrderBtn").click(function () {
@@ -81,9 +98,28 @@
         		//////	window.location = '@Url.Action("Index", "Shop")';
         		////});;*@
         	}
-        	else{
-        		swal("Failed", "Unable to place order.", "warning");
-        	}
+            else {
+                var insufficientProductsHtml = "";
+                if (response.InsufficientProducts && response.InsufficientProducts.length > 0) {
+                    insufficientProductsHtml = "<ul>";
+                    response.InsufficientProducts.forEach(function (product) {
+                        insufficientProductsHtml += `<li>${product.Name} - Insufficient quantity: ${product.InsufficientQuantity}</li>`;
+                    });
+                    insufficientProductsHtml += "</ul>";
+                }
+
+                swal({
+                    title: "Failed",
+                    text: "Please Remove Products Because We Dont Enough Quanity For These Products",
+                    icon: "warning",
+                    content: {
+                        element: "div",
+                        attributes: {
+                            innerHTML: insufficientProductsHtml
+                        }
+                    }
+                });
+            }
         })
         .fail(function (XMLHttpRequest, textStatus, errorThrown) {
             swal("Failed", "Unable to place order.", "warning");
@@ -109,7 +145,7 @@ else
                 <div class="col-md-12">
                     <div class="title-section">
                         <h3 class="title">
-                           Please Select Some Items In To Cart.
+                            Please Select Some Items In To Cart.
                         </h3>
                     </div>
                 </div>

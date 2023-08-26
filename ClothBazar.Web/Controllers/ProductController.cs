@@ -56,7 +56,7 @@ namespace ClothBazar.Web.Controllers
             newProduct.Price = model.Price;
             newProduct.Category = CategoriesService.Instance.GetCategory(model.CategoryID);
             newProduct.ImageURL = model.ImageURL;
-
+            newProduct.Quantity = model.Quantity;
             ProductsService.Instance.SaveProduct(newProduct);
             return RedirectToAction("ProductTable");            
         }
@@ -75,7 +75,7 @@ namespace ClothBazar.Web.Controllers
             model.Price = product.Price;
             model.CategoryID = product.Category != null ? product.Category.ID : 0;
             model.ImageURL = product.ImageURL;
-
+            model.Quantity = product.Quantity;
             model.AvailableCategories = CategoriesService.Instance.GetAllCategories();
 
             return PartialView(model);
@@ -89,7 +89,7 @@ namespace ClothBazar.Web.Controllers
             existingProduct.Name = model.Name;
             existingProduct.Description = model.Description;
             existingProduct.Price = model.Price;
-
+            existingProduct.Quantity=model.Quantity;
             existingProduct.Category = null; //mark it null. Because the referncy key is changed below
             existingProduct.CategoryID = model.CategoryID;
 

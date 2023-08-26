@@ -563,6 +563,7 @@
     <Content Include="Views\Product\PageNotFound.cshtml" />
     <Content Include="Views\Category\PageNotFound.cshtml" />
     <Content Include="Views\Order\PageNotFound.cshtml" />
+    <Content Include="Views\Order\Report.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

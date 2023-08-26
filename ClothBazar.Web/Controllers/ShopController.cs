@@ -124,37 +124,64 @@ namespace ClothBazar.Web.Controllers
                     var distinctProductIDs = productQuantities.Distinct().ToList();
 
                     var boughtProducts = ProductsService.Instance.GetProducts(distinctProductIDs);
+                    var insufficientQuantities = new List<int>();
 
-                    var sessionLineItems = new List<SessionLineItemOptions>();
                     foreach (var product in boughtProducts)
                     {
-                        var quantity = productQuantities.Where(productID => productID == product.ID).Count();
-                        sessionLineItems.Add(new SessionLineItemOptions
+                        var quantity = productQuantities.Count(productID => productID == product.ID);
+
+                        if (product.Quantity < quantity)
                         {
-                            PriceData = new SessionLineItemPriceDataOptions
-                            {
-                                UnitAmount = ((long)product.Price) * 100, // Convert to cents
-                                Currency = "usd",
-                                ProductData = new SessionLineItemPriceDataProductDataOptions
-                                {
-                                    Name = product.Name,
-                                },
-                            },
-                            Quantity = quantity,
-                        });
+                            insufficientQuantities.Add(product.ID);
+                        }
                     }
 
-                    var options = new SessionCreateOptions
+                    if (insufficientQuantities.Any())
                     {
-                        LineItems = sessionLineItems,
-                        Mode = "payment",
-                        SuccessUrl = $"http://localhost:61060/shop/success?productIDs={productIDs}", // Include product IDs in the URL
-                        CancelUrl = "http://localhost:61060/shop/cancel",
-                    };
+                        var insufficientProducts = boughtProducts
+                             .Where(product => insufficientQuantities.Contains(product.ID))
+                             .Select(product => new
+                             {
+                                 ID = product.ID,
+                                 Name = product.Name,
+                                 InsufficientQuantity = productQuantities.Count(productID => productID == product.ID) - product.Quantity
+                             });
 
-                    var service = new SessionService();
-                    Session session = service.Create(options);
-                    result.Data = new { Success = true,  Url =session.Url};
+                        result.Data = new { Success = false, InsufficientProducts = insufficientProducts };
+                    }
+                    else
+                    {
+                        var sessionLineItems = new List<SessionLineItemOptions>();
+                        foreach (var product in boughtProducts)
+                        {
+                            var quantity = productQuantities.Where(productID => productID == product.ID).Count();
+                            sessionLineItems.Add(new SessionLineItemOptions
+                            {
+                                PriceData = new SessionLineItemPriceDataOptions
+                                {
+                                    UnitAmount = ((long)product.Price) * 100, // Convert to cents
+                                    Currency = "usd",
+                                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                                    {
+                                        Name = product.Name,
+                                    },
+                                },
+                                Quantity = quantity,
+                            });
+                        }
+
+                        var options = new SessionCreateOptions
+                        {
+                            LineItems = sessionLineItems,
+                            Mode = "payment",
+                            SuccessUrl = $"http://localhost:61060/shop/success?productIDs={productIDs}", // Include product IDs in the URL
+                            CancelUrl = "http://localhost:61060/shop/cancel",
+                        };
+
+                        var service = new SessionService();
+                        Session session = service.Create(options);
+                        result.Data = new { Success = true, Url = session.Url };
+                    }
                 }
               
             }
@@ -173,6 +200,14 @@ namespace ClothBazar.Web.Controllers
             {
                 var productQuantities = productIDs.Split('-').Select(x => int.Parse(x)).ToList();
                 var boughtProducts = ProductsService.Instance.GetProducts(productQuantities.Distinct().ToList());
+
+                foreach (var product in boughtProducts)
+                {
+                    var quantity = productQuantities.Where(productID => productID == product.ID).Count();
+                    // Update product quantities after placing the order
+                    product.Quantity -= quantity;
+                    ProductsService.Instance.UpdateProduct(product);
+                }
 
                 // Create the order and save data to the database
                 Order newOrder = new Order();
