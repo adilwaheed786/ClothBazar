@@ -89,9 +89,18 @@
                                         <span class="inc quantity-button">+</span>
                                         <span class="dec quantity-button">-</span>
                                     </div>
-                                    <div class="add-to-cart">
-                                        <a class="detailproductAddToCart" data-id="@Model.Product.ID">ADD TO CART</a>
-                                    </div>
+                                    @if (Model.Product.Quantity > 0)
+                                    {
+                                        <div class="add-to-cart">
+                                            <a class="detailproductAddToCart" data-id="@Model.Product.ID">ADD TO CART</a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="add-to-cart text-center">
+                                            <a>Out Of Stock</a>
+                                        </div>
+                                    }
                                     <div class="box-like">
                                         <a href="#" class="like"><i class="fa fa-heart-o"></i></a>
                                     </div>
@@ -133,7 +142,7 @@
 }
 <script>
 
-	var products;
+    var products;
     var products = [];
 
     $(".detailproductAddToCart").click(function () {
