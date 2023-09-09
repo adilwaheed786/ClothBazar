@@ -493,6 +493,9 @@
     </Content>
     <Content Include="Content\images\.DS_Store" />
     <Content Include="Content\images\shop\.DS_Store" />
+    <None Include="Properties\PublishProfiles\bazar786-001-site1 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\bazar786-001-site1 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

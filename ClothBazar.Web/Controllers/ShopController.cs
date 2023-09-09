@@ -21,6 +21,7 @@ namespace ClothBazar.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        string baseUrl = WebConfigurationManager.AppSettings["BaseUrl"]; // Use your configuration method to retrieve the value
 
         public ShopController()
         {
@@ -174,8 +175,8 @@ namespace ClothBazar.Web.Controllers
                         {
                             LineItems = sessionLineItems,
                             Mode = "payment",
-                            SuccessUrl = $"http://localhost:61060/shop/success?productIDs={productIDs}", // Include product IDs in the URL
-                            CancelUrl = "http://localhost:61060/shop/cancel",
+                            SuccessUrl = $"{baseUrl}/shop/success?productIDs={productIDs}", // Construct the URL
+                            CancelUrl = $"{baseUrl}/shop/cancel",
                         };
 
                         var service = new SessionService();
