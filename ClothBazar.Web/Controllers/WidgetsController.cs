@@ -28,7 +28,7 @@ namespace ClothBazar.Web.Controllers
             {
                 model.Products = ProductsService.Instance.GetProducts(1, 8);
             }
-
+    
             return PartialView(model);
         }
     }

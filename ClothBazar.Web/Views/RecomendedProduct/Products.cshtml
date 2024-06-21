@@ -1,0 +1,78 @@
+﻿@model RecomendedViewModel
+
+@{
+    var defaultImageURL = "/Content/images/system/placeholder-image.png";
+}
+
+@if (Model != null && Model.Products != null)
+{
+
+    <div class="product-content product-fourcolumn clearfix">
+        <ul class="product style2 isotope-product clearfix">
+
+            @foreach (var product in Model.Products)
+            {
+                var imageURL = string.IsNullOrEmpty(product.ImageURL) ? defaultImageURL : product.ImageURL;
+
+                <li class="product-item @product.Category.Name.ToLower()">
+                    <div class="product-thumb clearfix">
+                        <a href="@Url.Action("Details", "Product", new { ID = product.ID })" class="product-thumb">
+                            <img src="@imageURL" alt="image" style="height: 250px;">
+                        </a>
+                    </div>
+                    <div class="product-info text-center clearfix">
+                        <span class="product-title">
+                            @product.Name
+                        </span>
+                        <div class="price">
+                            <ins>
+                                <span class="amount">$ @product.Price</span>
+                            </ins>
+                        </div>
+                    </div>
+
+                    @if (product.Quantity > 0)
+                    {
+                        <a href="#" class="like"><span>Available Qty:@product.Quantity</span></a>
+                        <div class="add-to-cart text-center">
+                            <a class="productAddToCart" data-id="@product.ID">ADD TO CART</a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="add-to-cart text-center">
+                            <a>Out Of Stock</a>
+                        </div>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+<script>
+
+	var products;
+	$(".productAddToCart").click(function () {
+		var existingCookieData = $.cookie('CartProducts');
+
+		if (existingCookieData != undefined && existingCookieData != "" && existingCookieData != null)
+		{
+			products = existingCookieData.split('-');
+		}
+		else {
+			products = [];
+		}
+
+		var productID = $(this).attr('data-id');
+
+		products.push(productID);
+
+		$.cookie('CartProducts', products.join('-'), { path: '/' });
+
+		updateCartProducts();
+
+		swal("Done", "Product Added to Cart!", "success");
+	});
+
+</script>

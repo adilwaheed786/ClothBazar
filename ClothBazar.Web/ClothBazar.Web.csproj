@@ -216,6 +216,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\RecomendedProductController.cs" />
     <Compile Include="Controllers\SharedController.cs" />
     <Compile Include="Controllers\ShopController.cs" />
     <Compile Include="Controllers\WidgetsController.cs" />
@@ -567,6 +568,7 @@
     <Content Include="Views\Category\PageNotFound.cshtml" />
     <Content Include="Views\Order\PageNotFound.cshtml" />
     <Content Include="Views\Order\Report.cshtml" />
+    <Content Include="Views\RecomendedProduct\Products.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

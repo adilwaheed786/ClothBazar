@@ -43,4 +43,9 @@ namespace ClothBazar.Web.ViewModels
     {
         public Product Product { get; set; }
     }
+    public class RecomendedViewModel
+    {
+        public List<Product> Products { get; set; }
+
+    }
 }
